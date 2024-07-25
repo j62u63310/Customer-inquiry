@@ -15,20 +15,6 @@ class HiddenInteraction extends BaseEvent {
             if (this.currentInput) {
                 this.removeInput();
             }
-
-            const cell = this.spreadsheet.getCell(event.target);
-            const meta = cell ? cell.getMeta() : null;
-            if (cell && meta) {
-                const rowPosition = fields.rows.map(field => `${field}: ${meta.rowQuery[field]}`).join(', ');
-                const colPosition = fields.columns.map(field => `${field}: ${meta.colQuery[field]}`).join(', ');
-                const tooltipContent = `${colPosition}\n${rowPosition}\n${meta.valueField}: ${meta.fieldValue || '-'}`;
-
-                this.spreadsheet.showTooltip({
-                    position: { x: event.clientX, y: event.clientY },
-                    content: tooltipContent,
-                    containerClassName: 'antv-s2-tooltip-container'
-                });
-            }
         });
 
         this.spreadsheet.on(S2Event.DATA_CELL_DOUBLE_CLICK, (event) => {

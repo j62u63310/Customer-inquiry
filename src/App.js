@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SheetComponent } from '@antv/s2-react';
+import { setLang, extendLocale, getLang } from '@antv/s2'
 import '@antv/s2-react/dist/style.min.css';
 import './styles/App.css';
 import HiddenInteraction from './interactions/HiddenInteraction';
-import { fields } from './utils/fields';
+import { fields, zh_TW } from './utils/fields';
 import { fetchAllData, checkOrder, summaryData, updateData} from './utils/fetchData';
 
 const App = () => {
@@ -24,10 +25,6 @@ const App = () => {
             enableCopy: true,
             copyWithHeader: true,
         },
-        tooltip: {
-            showTooltip: false,
-        },
-        enableCopy: true,
     };
 
     const s2DataConfig = {
@@ -45,8 +42,12 @@ const App = () => {
         await updateData(spreadsheetData);
     };
 
+
     useEffect(() => {
         async function initializeDropdown() {
+            extendLocale({ 'zh-TW': zh_TW });
+            setLang('zh-TW');
+            console.log(getLang());
             const toolbar = document.querySelector('.kintone-app-headermenu-space');
             const order = await checkOrder();
             
@@ -81,6 +82,7 @@ const App = () => {
                 button.className = 'dropdown-button';
                 button.innerText = '儲存表格';
                 button.onclick = handleButtonClick;
+
     
                 dropdownContainer.appendChild(label);
                 dropdownContainer.appendChild(select);
@@ -98,6 +100,11 @@ const App = () => {
             <SheetComponent
                 dataCfg={s2DataConfig}
                 options={s2Options}
+                header= {{
+                    exportCfg: {
+                        open: true,
+                    },
+                }}
                 className="antv-s2-container"
                 ref={sheetRef}
             />
