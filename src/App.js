@@ -5,7 +5,7 @@ import '@antv/s2-react/dist/style.min.css';
 import './styles/App.css';
 import HiddenInteraction from './interactions/HiddenInteraction';
 import { fields, zh_TW } from './utils/fields';
-import { fetchAllData, checkOrder, summaryData, updateData} from './utils/fetchData';
+import { checkOrder, summaryData, updateData} from './utils/fetchData';
 
 const App = () => {
     const [data, setData] = useState([]);
@@ -21,6 +21,7 @@ const App = () => {
                     interaction: HiddenInteraction,
                 },
             ],
+            linkFields: ["子件規格", "處理選單", "製程"],
             selectedCellsSpotlight: true,
             enableCopy: true,
             copyWithHeader: true,
@@ -47,7 +48,6 @@ const App = () => {
         async function initializeDropdown() {
             extendLocale({ 'zh-TW': zh_TW });
             setLang('zh-TW');
-            console.log(getLang());
             const toolbar = document.querySelector('.kintone-app-headermenu-space');
             const order = await checkOrder();
             
