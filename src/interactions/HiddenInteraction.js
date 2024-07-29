@@ -99,40 +99,72 @@ class HiddenInteraction extends BaseEvent {
     saveAndRemoveInput() {
         const { input, meta } = this.currentInput;
         const newValue = input.value;
-
+    
+        // 查找資料索引
         const dataIndex = this.spreadsheet.dataCfg.data.findIndex(row =>
             fields.rows.every(field => row[field] === meta.rowQuery[field]) &&
             fields.columns.every(field => row[field] === meta.colQuery[field])
         );
-
+    
+        let total = 0;
+        let 數量;
+    
         const newData = [...this.spreadsheet.dataCfg.data];
-
+    
         if (dataIndex !== -1) {
+            // 如果找到匹配的行，獲取需求數量並更新該行
+            數量 = newData[dataIndex]["需求數量"];
             newData[dataIndex] = { ...newData[dataIndex], [meta.valueField]: newValue };
         } else {
+            // 如果沒有找到匹配的行，新增一行並設置需求數量
             const newRow = {};
             fields.rows.forEach(field => {
                 newRow[field] = meta.rowQuery[field];
             });
+    
             fields.columns.forEach(field => {
                 newRow[field] = meta.colQuery[field];
             });
+    
             fields.values.forEach(valueField => {
                 newRow[valueField] = valueField === meta.valueField ? newValue : null;
             });
-
+    
             const existingRow = this.spreadsheet.dataCfg.data.find(row => row["客戶來詢單號"]);
-            newRow["客戶來詢單號"] = existingRow["客戶來詢單號"];
+            if (existingRow) {
+                newRow["客戶來詢單號"] = existingRow["客戶來詢單號"];
+            } else {
+                newRow["客戶來詢單號"] = "預設單號"; // 或其他處理方式
+            }
 
             console.log(newRow);
-
+    
+            // 設置需求數量
+            數量 = newRow["需求數量"];
+    
             newData.push({ ...newRow, [meta.valueField]: newValue });
         }
 
+    
+        // 計算總金額
+        for (const data of newData) {
+            if (data["需求數量"] == 數量) {
+                total += parseInt(data["加工費用(USD)"] || 0, 10);
+            }
+        }
+    
+        // 更新總金額
+        for (const data of newData) {
+            if (data["需求數量"] == 數量) {
+                data["總金額"] = total.toString();
+            }
+        }
+    
+        // 更新資料配置並重新渲染表格
         this.spreadsheet.setDataCfg({ ...this.spreadsheet.dataCfg, data: newData });
         this.spreadsheet.render();
-        
-
+    
+        // 移除輸入
         this.removeInput();
     }
 

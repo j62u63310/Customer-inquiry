@@ -114,8 +114,7 @@ export async function updateData(records) {
             app: sheetAppID,
             query: `${fieldsCodes.客戶來詢單號} in ("${客戶來詢單號}") and 
                     ${fieldsCodes.主件規格} in ("${主件規格}") and
-                    ${fieldsCodes.數量} in ("${需求數量}") and
-                    ${fieldsCodes.總金額} in ("${總金額}")`
+                    ${fieldsCodes.數量} in ("${需求數量}")`
         });
 
         if (resp.records.length > 0) {
